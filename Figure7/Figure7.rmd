@@ -1,0 +1,56 @@
+
+library(vegan)
+library(dplyr)
+library(ggcor)
+library(ggplot2)
+
+
+otu <- read.delim("clipboard",header = 1,row.names = 1,check.names = F,sep = "\t")
+
+df <-data.frame(t(otu))
+
+env <-  read.delim("clipboard",sep="\t",header = T,row.names = 1,check.names = F)
+
+p <- quickcor(env,#数据
+              type = "upper",
+              method = "pearson",
+              show.diag = T) +
+  geom_square()+#类型
+  scale_fill_gradient2( high = '#fe6263', mid = 'white',low = '#7caaff')  
+p
+
+df_mantel <- mantel_test(df, env, #数据
+                         mantel.fun = 'mantel',
+                         spec.dist.method = 'bray', 
+                         env.dist.method = 'euclidean',)
+                         
+
+df_mantel <- df_mantel %>%
+  mutate(df_r = cut(r, breaks = c(-Inf, 0.25, 0.5, Inf),
+                labels = c("< 0.25", "0.25 - 0.5", ">= 0.5")),
+         df_p = cut(p.value, breaks = c(-Inf, 0.01, 0.05, Inf),
+                    labels = c("< 0.01", "0.01 - 0.05", ">= 0.05")))
+
+df_mantel$linetype <- ifelse(df_mantel$p.value>=0.05,2,1)
+df_mantel$linetype <- factor(df_mantel$linetype,levels = c("1","2"))
+
+quickcor(env, type = "upper",method = "pearson",show.diag = T,cor.test = T) +
+  geom_square()+
+  scale_fill_gradient2( high = '#fe6263', mid = 'white',low = '#7caaff')+
+  geom_square() +
+  geom_mark(r = NA,sig.thres = 0.05, size = 6, color = "black")+
+  anno_link(df_mantel, aes(color = df_p,
+                           size = df_r,
+                           linetype = linetype),
+            label.size = 4,
+            label.fontface = 1,
+            curvature = 0.2,
+            nudge_x =0.2)+
+  scale_size_manual(values = c(0.8, 1.4, 2))+
+  scale_color_manual(values = c("#ffa83a","#dc4fff","#cacdd2"))+
+  scale_linetype_manual(values = c(1,2))+
+  guides(fill = guide_colorbar(title = "Pearson's r", order = 1),
+         size = guide_legend(title = "Mantel's r",order = 2),
+         color = guide_legend(title = "p-value", order = 3),
+         linetype = "none") 
+
