@@ -1,0 +1,43 @@
+
+library(ggbiplot)
+library(vegan)
+library(ggplot2)
+
+
+otu <- read.delim("clipboard",header=TRUE,row.names=1)
+
+group <- read.delim("clipboard",header=TRUE,row.names=1)
+
+sample <- data.frame(t(otu))
+nmds1 <- metaMDS(sample, distance = 'bray', k = 4)
+data<-data.frame(nmds1$species)
+summary(nmds1)
+
+nmds1.stress <- nmds1$stress
+nmds1.point <- data.frame(nmds1$point)
+nmds1.species <- data.frame(nmds1$species)
+sample_site <- nmds1.point[1:2]
+sample_site$names <- rownames(sample_site)
+colnames(sample_site)[1:2] <- c('NMDS1', 'NMDS2')
+
+sample_site <- cbind(sample_site,group)
+
+#NMDS
+nmds_plot <- ggplot() +
+  geom_point(data = sample_site, aes(NMDS1, NMDS2,color =class, shape = class), size = 3, alpha = 0.8) +
+  stat_ellipse(data = sample_site,aes(NMDS1, NMDS2,fill=class),geom="polygon",level=0.8,alpha=0.1)+
+  theme(panel.grid = element_blank(), panel.background = element_rect(color = 'black', fill = 'transparent')) + #去掉背景  
+  theme(legend.key = element_rect(fill = 'transparent'), legend.title = element_blank()) + #去掉图例标题及标签背???
+  labs(x = 'NMDS axis1', y = 'NMDS axis2', title = paste('Stress =', round(nmds1$stress, 4))) +
+  theme(plot.title = element_text(hjust = 0.5))+ #标题居中
+  theme(panel.background = element_blank(),axis.line = element_line(color = "black"))+theme_bw()+theme(panel.grid.major = element_blank(),
+                                                                                                       panel.grid.minor = element_blank(),)#去上右边???
+
+nmds_plot
+
+
+
+
+
+
+

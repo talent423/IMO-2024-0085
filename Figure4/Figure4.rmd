@@ -1,0 +1,47 @@
+
+library(ggtern)
+library(BiocManager)
+library(tidyverse)
+library(dplyr)
+library(amplicon) 
+library(aggregatesR)
+otu  = read.delim("clipboard", header=T, row.names=1) 
+design = read.delim("clipboard", header=T, row.names=1,)
+otutab <- otu
+
+otu_tern <- data_clean(otutab, design, type="absolute", threshold=0.001, times=100)
+head(otu_tern,n=3)
+
+write.table (otu_tern, file ="ϸ??OTU-abc???Ӳ????Է???0125.csv",sep =",", quote =FALSE)
+
+
+plot_data = read.delim("clipboard", header=T, row.names=1) 
+p = ggtern(data=plot_data, aes(x=A, y=B, z=C)) + 
+  geom_mask()+ 
+  geom_point(aes(size=size, color=Class),alpha=0.8) +
+  scale_color_manual(values  = c('#E31A1C','#228B22','#1F78B4', '#FDB462', '#8B658B',  '#4876FF', '#00BFFF', '#EE82EE','#8B8682','#CDC9C9'))+
+  guides(color = guide_legend(override.aes = list(size = 4)))+
+  labs(x="Donor-P+",y="NM-L+P+",z="AM-L-P+")+
+  theme_bw() +theme_arrowdefault()+
+  theme(axis.text=element_blank(), axis.ticks=element_blank())
+
+p
+
+
+library(ggtern)
+plot_data = read.delim("clipboard", header=T, row.names=1) 
+
+p = ggtern(data=plot_data, aes(x=a, y=b, z=c)) + 
+  geom_mask()+ 
+  geom_point(aes(size=size, color=Class),alpha=0.8) +
+  scale_color_manual(values  = c('#E31A1C','#228B22','#1F78B4', '#FDB462', '#8B658B',  '#4876FF', '#00BFFF', '#EE82EE','#8B8682','#CDC9C9'))+
+  guides(color = guide_legend(override.aes = list(size = 4)))+
+ labs(x="Donor-P-",y="NM-L+P-",z="AM-L-P-")+
+  theme_bw() +theme_arrowdefault()+
+  theme(axis.text=element_blank(), axis.ticks=element_blank())
+
+p
+
+
+
+

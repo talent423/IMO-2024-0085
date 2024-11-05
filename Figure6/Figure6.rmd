@@ -1,0 +1,38 @@
+
+otu <- read.delim("clipboard",header=TRUE,row.names=1)
+a<-rowSums(otu)
+u <- which(a >= 0.005)
+otu1 <- otu[u,]
+otu2=otu1
+otu1[otu1>0] <- 1
+otu3<- otu2[which(rowSums(otu1) >=3), ]
+#ary(psych)
+# ??<- otu3
+occor <- corr.test(t(otu),method="spearman",adjust="fdr",alpha=0.05)#adjor.r <-  occor$r # ȡor.p <- occor$p # ȡ - p.adjust(occor.p, method = 'BH') 
+# ȷr.r[occor.p>0.05|abs(occor.r)<0.8] = 0
+diag(occor.r) <- 0
+#??o- occor.r * occor.p
+diag(z) <- 0    #???d(z)[1:6,1:6]
+#z
+w?rary(igraph)
+#??? graph.adjacency(z, weighted = TRUE, mode = 'undirected')
+g
+#???- simplify(g)
+#??�lete.vertices(g, names(degree(g)[degree(g) == 0]))
+#??ģʽ?rrelation <- E(g)$weight
+E(g)$weight <- abs(E(g)$weight)
+E(g)$cor[E(g)$correlation>0]<- 1
+E(g)$cor[E(g)$correlation<0]<- -1
+#Ϊ?ڵ�read.delim("clipboard",header=TRUE,row.names=1)
+tax <- tax[as.character(V(g)$name), ]
+
+V(g)$Domain <- tax$Domain
+V(g)$Phylum <- tax$Phylum
+V(g)$Class <- tax$Class
+V(g)$Order <- tax$Order
+V(g)$Family <- tax$Family
+V(g)$Genus <- tax$Genus
+V(g)$Species <- tax$Species
+#?鿴???g)
+#???б??raph(g, '??Ҷ?ݲ?NML+P+', format = 'graphml')
+

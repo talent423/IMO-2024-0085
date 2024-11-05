@@ -1,0 +1,28 @@
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(ggpmisc)
+
+
+repeat1_rawgrassland <- read.delim("clipboard", header=T, sep="\t", quote = "", row.names=1)
+
+repeat1_rawgrassland$Treatment <-factor(repeat1_rawgrassland$Treatment,levels = c("b","d","B","D"))
+str(repeat1_rawgrassland)
+
+p1<-ggplot(data=repeat1_rawgrassland,aes(x=D, y=B))+
+  geom_point(aes(col=Treatment), size=6) +
+  geom_smooth(method = 'lm',color="black") +
+  stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., stat(p.value.label), sep = '~`,`~')),
+               formula = y~x, parse = TRUE, label.x.npc = 'left', label.y.npc = 'top', size = 5)+
+  theme(panel.background = element_rect(fill='white',
+                                        colour='black'))+
+  facet_wrap(~A,nrow=1, scales = "free")+ 
+  
+  scale_color_manual(values=c("#E4F3F7","#A6D3E2","#F7DE9D","#F2A962"))+
+  theme(strip.text.x = element_text(size = 20)) + 
+  theme(axis.title.x= element_text(size=20, family="Times New Roman", color="black", face= "bold", vjust=0.5, hjust=0.5))+
+  theme(axis.title.y= element_text(size=20, family="Times New Roman", color="black", face= "bold", vjust=2.0, hjust=0.5))+
+  theme(axis.text.x= element_text(size=17, family="Times New Roman", color="black", face= "bold", angle=0,vjust=0.5, hjust=0.5))+
+  theme(axis.text.y= element_text(size=17, family="Times New Roman", color="black", face= "bold", angle=0,vjust=0.5, hjust=0.5))
+p1
+
